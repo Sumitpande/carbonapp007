@@ -1,0 +1,235 @@
+{% extends "app/layout.html" %}{% load static %}
+
+{% block head %}
+<style>
+
+body{
+  font-family: Montserrat, sans-serif;
+  /* background: #28223f; */
+}
+.container{
+  user-select: none;
+  margin: 60px auto;
+  background: #231e39;
+  color: #b3b8cd;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 960px;
+  text-align: center;
+  box-shadow: 0 10px 20px -10px rgba(0,0,0,.75);
+}
+.cover-photo{
+  background: url(https://images.unsplash.com/photo-1540228232483-1b64a7024923?ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80);
+  height: 160px;
+  width: 100%;
+  border-radius: 5px 5px 0 0;
+}
+.profile{
+	height: 150px;
+	width: 150px;
+	border-radius: 50%;
+	margin: 93px 0 0 0;
+	border: 1px solid #1f1a32;
+	padding: 7px;
+	background: #292343;
+	
+	
+  
+}
+
+.profile-name{
+  font-size: 25px;
+  font-weight: bold;
+  margin: 87px 0 0 0;
+}
+.about{
+  margin-top: 35px;
+  
+  padding-bottom: 20px;
+}
+
+.-fx-image-gal {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	margin: 0 auto;
+	width: 100%;
+	max-width: 960px;
+	justify-content: left;
+}
+.-fx-gal-item {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+.-fx-gal-item a {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	background-color: white;
+}
+
+.-fx-gal-image-thumb img {
+	width: 100%;
+	cursor: pointer;
+	-webkit-filter: grayscale(100%);
+	-moz-filter: grayscale(100%);
+	filter: grayscale(100%);
+	transform: scale(1.1);
+	transition: all 0.5s ease;
+}
+
+.-fx-gal-image-thumb:hover img {
+	cursor: pointer;
+	-webkit-filter: grayscale(0%);
+	-moz-filter: grayscale(0%);
+	filter: grayscale(0%);
+	transform: scale(1.5);
+	transition: all 0.5s ease;
+}
+@media (min-width: 420px) {
+	.-fx-image-gal {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	.-fx-gal-item {
+		width: 50%;
+	}
+}
+@media (min-width: 768px) {
+	.-fx-gal-item {
+		width: 33.33%;
+	}
+}
+
+
+
+
+
+
+</style>
+
+{% endblock %}
+{% block body %}
+
+
+
+<div class="container">
+    <div class="cover-photo">
+		{% if not profile  %}
+		<img src="/media/default.png" class="profile">
+		
+		{% else %}
+			{% if not profile.image %}
+			<img src="/media/default.png" class="profile">
+			{% else %}
+			<img src="{{ profile.image.url }}" class="profile">
+			{% endif %}
+		{% endif %}
+		
+		
+	</div>
+	<div class="profile-name">{{user.username}}</div>
+	
+	<span id="pic">update profile</span> | 
+	<span id="bio">edit bio</span>
+	
+	<form  method="POST" enctype="multipart/form-data" id="pic-form" >
+		{% csrf_token %}	
+		{{form.image}}
+		<input class="btn btn-info" type="submit" value="update">
+		
+	</form>
+ 	<form  method="post" id="bio-form" action="{% url 'editBio' %}">
+		{% csrf_token %}
+		{{bio.bio}}<br>
+		<input class="btn btn-info" type="submit" value="update">
+		
+	</form>
+    <p class="about">
+		{% if not profile %}
+		No bio
+		
+		{% else %}
+		{{ profile.bio }}
+		{% endif %}
+		
+
+		
+		
+		</p>
+    
+</div>
+
+{%  if posts %}
+
+<div class="-fx-image-gal">
+	{% for post in posts %}
+	<div class="-fx-gal-item">
+		<div class="-fx-gal-image-thumb" tabindex="1">
+			<a href="#" target="_blank">
+				<img src="{{post.image.url}}" />
+			</a>
+		</div>
+	</div>
+	{% endfor %}
+
+
+
+</div><!-- /gallery -->
+
+
+
+{% else %}
+<h2 class="text-center">You have not posted anything.</h2>
+
+{% endif %}
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script>
+
+$(document).ready(function () {
+	$('#pic-form').hide();
+	$('#bio-form').hide();
+
+	$("#pic").click(function(){
+		$('#bio-form').hide();
+		$('#pic-form').show();
+	});
+
+	$("#bio").click(function(){
+		$('#pic-form').hide();
+		$('#bio-form').show();
+		
+	});
+
+	
+
+
+
+})
+
+
+	
+</script>
+{% endblock %}
+
